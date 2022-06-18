@@ -1,5 +1,5 @@
-import { useState } from "react";
-
+import { useState, useContext } from "react";
+import { UserContext } from "../../contexts/user.context";
 
 import FormInput from "../form-input/form-input.component";
 import Button from "../button/button.component";
@@ -23,6 +23,8 @@ const SignInForm = () => {
   const [formFields, setFormFields] = useState(defaultFromFields);
   const{ email, password} = formFields;
 
+  const { setCurrentUser } = useContext(UserContext);
+
   console.log(formFields);
 
   const resetFormFields = () => {
@@ -39,13 +41,17 @@ const SignInForm = () => {
     
 
     try {
-      const response = await signInAuthUserWithEmailAndPassword(email,password);
-      console.log(response);
+      const {user} = await signInAuthUserWithEmailAndPassword(
+        email,
+        password
+      );
+
+      setCurrentUser(user);
       resetFormFields();
     } catch(error) {
 
       switch(error.code) {
-        case 'auth/wrongpassword':
+        case 'auth/wrong-password':
           alert('Incorrect password for email');
           break
         
